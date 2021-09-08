@@ -13,18 +13,30 @@ mycursor = mysql.cursor()
 class Bankapp:
     def __init__(self):
         self.name = "paul" 
-        # menu()   
+        self.choose = " "
+        self.mytransaction = " "
+        self.withdrawmoney = ""
+        self.balance = " "
+        self.menu()
 
     def menu(self):
         print("""YOU ARE WELCOME TO PAULOW BANK\n1. Registration\n2. Transaction\n3. Quit""")
         self.choose = input("Enter any number of your choose>>>>")
         if self.choose.strip()=="1":
             self.registration()
-        elif self.choose ==2:
-            pass
+        elif self.choose == "2":
+            # self.transaction()
+            # self.myusername()
+            self.findusername()
         else:
-            sys.exit()         
+            sys.exit() 
+    def myusername(self):
+        query ="INSERT INTO  transactiongoing (user_name,withdraw,balance) VALUES(%s, %s, %s)"
+        value =(self.userUsername,self.withdrawmoney,self.balance)
+        mycursor.execute(query,value)
+        mysql.commit()        
         
+    ############# THIS SHOWS THE REGISTRATION FUNCTION #######################
     def registration(self):
         self.userfirstName = input("What is your first Name? ")
         self.usersecondName = input("What is your second Name? ")
@@ -39,18 +51,85 @@ class Bankapp:
         mycursor.execute(query,value)
         mysql.commit()
         print(mycursor.rowcount, "records inserted successfully")
-        self.admin()
-       
-      
-        
-    def admin(self):
-        query =  "SELECT * FROM userinfo WHERE account_number=%s ,user_name=%s "
-        value =(self.accountNumber,self.userUsername)
-        mycursor.execute(query, value)
-        print(mycursor)
-        myreg = mycursor.fetchall()
-        print(myreg)
+        self.myusername()
 
+    ################ SHOW ACCOUNT NUMBER AND PIN BEFORE PERFORMING TRANSACTION ######################        
+    def findusername(self):
+        self.checkuseraccountnumber = input("Enter your account number>>")
+        self.checkPin = input("Enter your Pin here>>")
+        query = "SELECT  * FROM userinfo WHERE account_number=%s AND pin=%s "
+        value = (self.checkuseraccountnumber,self.checkPin)
+        mycursor.execute(query, value)
+        myreg= mycursor.fetchall()
+        print(myreg)
+        if myreg != []:  
+            print("""WELCOME TO PAUL BANK\n1. Withdraw\n2. check your account balance\n3. Transfer""")
+            self.mytransaction = input("Enter any number to perform your transaction>> ") 
+            if self.mytransaction == "1":
+                self.withdrawing()
+            elif self.mytransaction == "2":
+                self.balancing()
+            elif self.mytransaction == "3":
+                self.tranfermoney()
+            else:
+                pass
+        else:
+            print("you don't have an account, you have to register ")
+            self.dontHaveAccRegister()
+            
+
+    def dontHaveAccRegister(self):
+        didYouwantreg = input("Did you want to do registration?  ")  
+        if didYouwantreg.lower().strip() == "yes":
+            self.registration()
+        else:
+            sys.exit()
+    
+
+    def tranfermoney(self):
+        self.iwantotranfermoney =int(input("How much did you want to tranfer?>> "))
+        query = ("UPDATE transactiongoing  SET  balance =%s WHERE balance =%s")
+        # query = ("INSERT INTO transactiongoing WHERE balance =%s")
+        value =(self.iwantotranfermoney,self.iwantotranfermoney)
+        mycursor.execute(query,value)
+        mysql.commit()
+            
+
+   
+    ################ TRANSACTION FUNCTION STAT FROM HERE######################
+    
+    # def transaction(self):
+    #     # self.findusername() 
+    #     if myreg != "":  
+    #         print("""WELCOME TO PAUL BANK\n1. Withdraw\n2. check your account balance\n3. Transfer""")
+    #         self.mytransaction = input("Enter any number to perform your transaction>> ") 
+    #         if self.mytransaction == "1":
+    #             pass
+    #         elif self.mytransaction == "2":
+    #             pass
+    #         elif self.mytransaction == "3":
+    #             pass
+    #         else:
+    #             pass
+    #     else:
+    #         print("you don't have an account ")
+    
+    def withdrawing(self):
+        self.withdrawmoney = float(input("Enter the amount you want to withdraw>> "))
+        query = ("UPDATE transactiongoing SET balance = %s WHERE balance = %s")
+        value = (self.withdrawmoney,self.withdrawmoney)
+        mycursor.execute(query, value)
+        mysql.commit()
+        print(self.withdrawmoney )
+        print(mycursor.rowcount, 'record updated successfuly')
+    
+
+    def balancing(self):
+        query = "SELECT balance =%s FROM transactiongoing WHERE balance=%s"
+        value = (self.balance,self.balance)
+        mycursor.execute(query,value)
+        myreg = mycursor.fetchone()
+        print(self.balance)
         
 
 
@@ -59,7 +138,7 @@ class Bankapp:
 app = Bankapp()
 # app.registration()
 # app.admin()
-app.menu()
+# app.menu()
 
 
 
@@ -101,8 +180,8 @@ app.menu()
 #     # print(mycursor)
 #     # myreg = mycursor.fetchall()
 #     # print(myreg)
-#     sql = "DROP TABLE userinfo"
-#     mycursor.execute(sql)
+    # sql = "DROP TABLE userinfo"
+    # mycursor.execute(sql)
 
 
     
