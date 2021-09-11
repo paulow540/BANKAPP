@@ -79,8 +79,8 @@ class Bankapp:
             
 
     def dontHaveAccRegister(self):
-        didYouwantreg = input("Did you want to do registration?  ")  
-        if didYouwantreg.lower().strip() == "yes":
+        self.didYouwantreg = input("Did you want to do registration?  ")  
+        if self.didYouwantreg.lower().strip() == "yes":
             self.registration()
         else:
             sys.exit()
@@ -88,9 +88,9 @@ class Bankapp:
 
     def tranfermoney(self):
         self.iwantotranfermoney =int(input("How much did you want to tranfer?>> "))
-        query = ("UPDATE transactiongoing  SET  balance =%s WHERE balance =%s")
-        # query = ("INSERT INTO transactiongoing WHERE balance =%s")
-        value =(self.iwantotranfermoney,self.iwantotranfermoney)
+        # query = ("UPDATE transactiongoing  SET  balance =%s WHERE balance =%s")
+        query = ("INSERT INTO transactiongoing WHERE balance =%s")
+        value =(self.iwantotranfermoney)
         mycursor.execute(query,value)
         mysql.commit()
             
